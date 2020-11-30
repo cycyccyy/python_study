@@ -3,7 +3,7 @@
 # @Author: chenying
 # @File: fundCompany.py
 # @Software:PyCharm
-# @Desciption: 爬取天天基金网站基金公司相关数据
+# @Desciption: 爬取天天基金网站各个基金公司基金的信息
 
 
 from bs4 import BeautifulSoup
@@ -15,40 +15,34 @@ import xlwt
 def main():
     # 1、获取网页
     baseurl = " http://fund.eastmoney.com/company/default.html"
-    # 2、解析网页内容
-    dataList = getData(baseurl)
+    # 2、解析网页内容获取基金公司链接id
+    dataList = getCompanyLink(baseurl)
+    # 3、循环爬取基金公司的基金信息
+    companyurl = "http://fund.eastmoney.com"
+    getFundInfo(companyurl,dataList)
+
     # 保存数据
-    savepath = "fund/基金公司.xls"
+    savepath = "基金公司代码.xls"
     saveData(dataList, savepath)
 
 
-findTbody = re.compile(r'<tr>(.*)</tr>')
-findNum = re.compile(r'<td class="sno width50">(.*?)</td>')
-findCompany = re.compile(r'<td class="td-align-left" .*">(.*?)</a></td>')
-findCompanyDate = re.compile(r'<td>(\d{4}-\d{1,2}-\d{1,2})</td>')
-findScale = re.compile(r'<td class="scale number" data-sortvalue="(.*?)">')
 findLink = re.compile(r'<a class="ttjj-link" href="(.*?)">详情</a>')
 
 
-def getData(url):
+def getCompanyLink(url):
     dataList = []
     html = parseUrl(url)
     soup = BeautifulSoup(html, 'html.parser')
     for item in soup.find_all('div', id="companyTable"):
         item = str(item)
-        company = re.findall(findCompany, item)
-        companyDate = re.findall(findCompanyDate, item)
-        companyScale = re.findall(findScale, item)
         companyLink = re.findall(findLink, item)
-    for (c, d, s, l) in zip(company, companyDate, companyScale, companyLink):
-        data = []
-        data.append(c)
-        data.append(d)
-        data.append(s)
-        data.append(l)
-        dataList.append(data)
+        for c in companyLink:
+            dataList.append(c)
     return dataList
 
+def getFundInfo(companyurl,dataList):
+    for data in dataList:
+        url = (companyurl+data).lower()
 
 def parseUrl(url):
     headers = {
@@ -69,13 +63,13 @@ def parseUrl(url):
 
 def saveData(dataList, savepath):
     book = xlwt.Workbook(encoding="utf-8", style_compression=0)
-    sheet = book.add_sheet('基金公司相关信息', cell_overwrite_ok=True)
-    col = ('基金公司', '成立日期', '基金规模', '详情')
-    for i in range(0, 4):
+    sheet = book.add_sheet('基金公司代码信息', cell_overwrite_ok=True)
+    col = ('基金公司详情')
+    for i in range(0, 1):
         sheet.write(0, i, col[i])
     for i in range(0, len(dataList)):
         data = dataList[i]
-        for j in range(0, 4):
+        for j in range(0, 1):
             sheet.write(i + 1, j, data[j])
     book.save(savepath)
 
