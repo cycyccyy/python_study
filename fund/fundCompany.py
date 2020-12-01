@@ -32,17 +32,24 @@ findLink = re.compile(r'<a class="ttjj-link" href="(.*?)">详情</a>')
 
 def getData(url):
     dataList = []
+    companyCode = []
     html = parseUrl(url)
     soup = BeautifulSoup(html, 'html.parser')
     for item in soup.find_all('div', id="companyTable"):
         item = str(item)
         company = re.findall(findCompany, item)
+
         companyDate = re.findall(findCompanyDate, item)
         companyScale = re.findall(findScale, item)
         companyLink = re.findall(findLink, item)
-    for (c, d, s, l) in zip(company, companyDate, companyScale, companyLink):
+    for link in companyLink:
+        code = re.findall("\d+", link)
+        companyCode.append(code)
+
+    for (c, e, d, s, l) in zip(company, companyCode, companyDate, companyScale, companyLink):
         data = []
         data.append(c)
+        data.append(e[0])
         data.append(d)
         data.append(s)
         data.append(l)
@@ -70,12 +77,12 @@ def parseUrl(url):
 def saveData(dataList, savepath):
     book = xlwt.Workbook(encoding="utf-8", style_compression=0)
     sheet = book.add_sheet('基金公司相关信息', cell_overwrite_ok=True)
-    col = ('基金公司', '成立日期', '基金规模', '详情')
-    for i in range(0, 4):
+    col = ('基金公司', '基金公司代码', '成立日期', '基金规模', '详情')
+    for i in range(0, 5):
         sheet.write(0, i, col[i])
     for i in range(0, len(dataList)):
         data = dataList[i]
-        for j in range(0, 4):
+        for j in range(0, 5):
             sheet.write(i + 1, j, data[j])
     book.save(savepath)
 
