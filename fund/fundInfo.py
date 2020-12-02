@@ -71,8 +71,8 @@ def getFundInfo(companyurl, dataList):
         url = companyurl + data[0]
         list = parseFundInfo(url, data[0])
         resultList.append(list)
-    print(resultList)
     return resultList
+
 
 def parseUrl(url):
     headers = {
@@ -94,13 +94,18 @@ def parseUrl(url):
 def saveData(dataList, savepath):
     book = xlwt.Workbook(encoding="utf-8", style_compression=0)
     sheet = book.add_sheet('基金公司代码信息', cell_overwrite_ok=True)
-    col = ('基金名称','基金代码','基金类型','基金详情','所属基金公司')
+    col = ('基金名称', '基金代码', '基金类型', '基金详情', '所属基金公司')
     for i in range(0, 5):
         sheet.write(0, i, col[i])
+    length = 0
     for i in range(0, len(dataList)):
         data = dataList[i]
-        for j in range(0, 5):
-            sheet.write(i + 1, j, data[j])
+        length += len(data)
+    # for m in range(0, length):
+    #     data = dataList[m]
+    #     for k in data:
+    #         for j in range(0, 5):
+    #             sheet.write(m + 1, j, k[j])
     book.save(savepath)
 
 
