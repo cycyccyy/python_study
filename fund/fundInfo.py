@@ -20,7 +20,7 @@ def main():
     # 3、循环爬取基金公司的基金信息
     companyurl = "http://fund.eastmoney.com/Company/home/KFSFundRank?gsid="
     resultList = getFundInfo(companyurl, dataList)
-    # 保存数据
+    # # 保存数据
     savepath = "基金公司代码.xls"
     saveData(resultList, savepath)
 
@@ -62,16 +62,36 @@ def parseFundInfo(url, id):
             data.append(l)
             data.append(id)
             dataList.append(data)
+        print('list', dataList)
         return dataList
 
 
 def getFundInfo(companyurl, dataList):
-    resultList = []
-    for data in dataList:
-        url = companyurl + data[0]
-        list = parseFundInfo(url, data[0])
-        resultList.append(list)
-    return resultList
+    # resultList = []
+    savepath = "基金公司代码.xls"
+    list = parseFundInfo('http://fund.eastmoney.com/Company/home/KFSFundRank?gsid=80041198', 80041198)
+    book = xlwt.Workbook(encoding="utf-8", style_compression=0)
+    sheet = book.add_sheet('基金公司代码信息', cell_overwrite_ok=True)
+    col = ('基金名称', '基金代码', '基金类型', '基金详情', '所属基金公司')
+    for i in range(0, 5):
+        sheet.write(0, i, col[i])
+    print('list',type())
+    # for m in range(0, len(list)):
+    #     print('m',m)
+    #     # for k in range(0, len(m)):
+    #     #     sheet.write(m + 1, k, m[k])
+
+    book.save(savepath)
+        # for j in range(0, 5):
+        #     sheet.write(m + 1, j, list[])
+
+    # for data in dataList:
+    #     resultList.append(data[0])
+    # for data in resultList:
+    #     url = companyurl + data
+    #     list = parseFundInfo(url, data)
+    #     resultList.append(list)
+    # return resultList
 
 
 def parseUrl(url):
@@ -97,15 +117,13 @@ def saveData(dataList, savepath):
     col = ('基金名称', '基金代码', '基金类型', '基金详情', '所属基金公司')
     for i in range(0, 5):
         sheet.write(0, i, col[i])
-    length = 0
     for i in range(0, len(dataList)):
         data = dataList[i]
-        length += len(data)
-    # for m in range(0, length):
-    #     data = dataList[m]
-    #     for k in data:
-    #         for j in range(0, 5):
-    #             sheet.write(m + 1, j, k[j])
+        print('data', data)
+        for m in range(0, len(data)):
+            print('数据', data[m])
+            for j in range(0, 5):
+                sheet.write(m + 1, j, data[m][j])
     book.save(savepath)
 
 
