@@ -21,7 +21,7 @@ def main():
     companyurl = "http://fund.eastmoney.com/Company/home/KFSFundRank?gsid="
     resultList = getFundInfo(companyurl, dataList)
     # # 保存数据
-    savepath = "基金公司代码.xls"
+    savepath = "基金基本信息.xls"
     saveData(resultList, savepath)
 
 
@@ -43,56 +43,31 @@ def getCompanyLink(url):
         dataList.append(re.findall(r"\d+?\d*", c))
     return dataList
 
-
-def parseFundInfo(url, id):
-    dataList = []
-    html = parseUrl(url)
-    soup = BeautifulSoup(html, 'html.parser')
-    for item in soup.find_all('table', class_="ttjj-table"):
-        item = str(item)
-        fundName = re.findall(findFundName, item)
-        fundCode = re.findall(findFundCode, item)
-        fundLink = re.findall(findFundLink, item)
-        fundType = re.findall(findFundType, item)
-        for (name, code, t, l) in zip(fundName, fundCode, fundType, fundLink):
-            data = []
-            data.append(name)
-            data.append(code)
-            data.append(t)
-            data.append(l)
-            data.append(id)
-            dataList.append(data)
-        print('list', dataList)
-        return dataList
-
-
 def getFundInfo(companyurl, dataList):
-    # resultList = []
-    savepath = "基金公司代码.xls"
-    list = parseFundInfo('http://fund.eastmoney.com/Company/home/KFSFundRank?gsid=80041198', 80041198)
-    book = xlwt.Workbook(encoding="utf-8", style_compression=0)
-    sheet = book.add_sheet('基金公司代码信息', cell_overwrite_ok=True)
-    col = ('基金名称', '基金代码', '基金类型', '基金详情', '所属基金公司')
-    for i in range(0, 5):
-        sheet.write(0, i, col[i])
-    print('list',type())
-    # for m in range(0, len(list)):
-    #     print('m',m)
-    #     # for k in range(0, len(m)):
-    #     #     sheet.write(m + 1, k, m[k])
-
-    book.save(savepath)
-        # for j in range(0, 5):
-        #     sheet.write(m + 1, j, list[])
-
-    # for data in dataList:
-    #     resultList.append(data[0])
-    # for data in resultList:
-    #     url = companyurl + data
-    #     list = parseFundInfo(url, data)
-    #     resultList.append(list)
-    # return resultList
-
+    resultList = []
+    tempList = []
+    for data in dataList:
+        resultList.append(data[0])
+    for data in resultList:
+        url = companyurl + data
+        html = parseUrl(url)
+        soup = BeautifulSoup(html, 'html.parser')
+        for item in soup.find_all('table', class_="ttjj-table"):
+            item = str(item)
+            fundName = re.findall(findFundName, item)
+            fundCode = re.findall(findFundCode, item)
+            fundLink = re.findall(findFundLink, item)
+            fundType = re.findall(findFundType, item)
+            for (name, code, t, l) in zip(fundName, fundCode, fundType, fundLink):
+                da = []
+                da.append(name)
+                da.append(code)
+                da.append(t)
+                da.append(l)
+                da.append(data)
+                tempList.append(da)
+                print('temp', tempList)
+    return tempList
 
 def parseUrl(url):
     headers = {
@@ -112,6 +87,7 @@ def parseUrl(url):
 
 
 def saveData(dataList, savepath):
+    print('长度', len(dataList))
     book = xlwt.Workbook(encoding="utf-8", style_compression=0)
     sheet = book.add_sheet('基金公司代码信息', cell_overwrite_ok=True)
     col = ('基金名称', '基金代码', '基金类型', '基金详情', '所属基金公司')
@@ -120,10 +96,9 @@ def saveData(dataList, savepath):
     for i in range(0, len(dataList)):
         data = dataList[i]
         print('data', data)
-        for m in range(0, len(data)):
-            print('数据', data[m])
-            for j in range(0, 5):
-                sheet.write(m + 1, j, data[m][j])
+        for j in range(0, 5):
+            print('data[j]', data[j])
+            sheet.write(i + 1, j, data[j])
     book.save(savepath)
 
 
