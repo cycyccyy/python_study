@@ -3,7 +3,7 @@
 # @Author: chenying
 # @File: fundCompany.py
 # @Software:PyCharm
-# @Desciption: 爬取天天基金网站各个基金公司基金的信息
+# @Description: 爬取天天基金网站各个基金公司基金的信息
 
 
 from bs4 import BeautifulSoup

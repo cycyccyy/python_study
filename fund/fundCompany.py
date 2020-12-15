@@ -3,7 +3,7 @@
 # @Author: chenying
 # @File: fundCompany.py
 # @Software:PyCharm
-# @Desciption: 爬取天天基金网站基金公司相关数据
+# @Description: 爬取天天基金网站基金公司相关数据
 
 
 from bs4 import BeautifulSoup
@@ -14,7 +14,7 @@ import xlwt
 
 def main():
     # 1、获取网页
-    baseurl = " http://fund.eastmoney.com/company/default.html"
+    baseurl = "http://fund.eastmoney.com/company/default.html"
     # 2、解析网页内容
     dataList = getData(baseurl)
     # 保存数据
